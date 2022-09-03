@@ -61,6 +61,12 @@ app.post('/api/persons', (request, response) => {
       .json({ error: 'no name or number was provide' });
   }
 
+  const personAlreadyInPhonebook = persons.find(p => p.name === body.name);
+
+  if (personAlreadyInPhonebook) {
+    return response.status(400).json({ error: 'name already in phonebook' });
+  }
+
   const person = {
     name: body.name,
     number: body.number,
