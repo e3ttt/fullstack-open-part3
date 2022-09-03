@@ -53,6 +53,25 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end();
 });
 
+app.post('/api/persons', (request, response) => {
+  const body = request.body;
+  if (!body.name || !body.number) {
+    return response
+      .status(400)
+      .json({ error: 'no name or number was provide' });
+  }
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+  };
+
+  persons = persons.concat(person);
+
+  response.json(person);
+});
+
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
