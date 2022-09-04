@@ -29,7 +29,7 @@ app.use(
 
 const PORT = process.env.PORT || 3001;
 
-let persons = [
+let people = [
   {
     id: 1,
     name: 'Arto Hellas',
@@ -52,13 +52,13 @@ let persons = [
   },
 ];
 
-app.get('/api/persons', (request, response) => {
-  response.json(persons);
+app.get('/api/people', (request, response) => {
+  response.json(people);
 });
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/people/:id', (request, response) => {
   const id = Number(request.params.id);
-  const person = persons.find(p => p.id === id);
+  const person = people.find(p => p.id === id);
   if (person) {
     response.json(person);
   } else {
@@ -67,17 +67,17 @@ app.get('/api/persons/:id', (request, response) => {
 });
 
 app.get('/info', (request, response) => {
-  response.send(`<div>Phonebook has info for ${persons.length} people</div> 
+  response.send(`<div>Phonebook has info for ${people.length} people</div> 
     <div>${new Date()}</div>`);
 });
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/people/:id', (request, response) => {
   const id = Number(request.params.id);
-  persons = persons.filter(p => p.id !== id);
+  people = people.filter(p => p.id !== id);
   response.status(204).end();
 });
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/people', (request, response) => {
   const body = request.body;
   if (!body.name || !body.number) {
     return response
@@ -85,7 +85,7 @@ app.post('/api/persons', (request, response) => {
       .json({ error: 'no name or number was provide' });
   }
 
-  const personAlreadyInPhonebook = persons.find(p => p.name === body.name);
+  const personAlreadyInPhonebook = people.find(p => p.name === body.name);
 
   if (personAlreadyInPhonebook) {
     return response.status(400).json({ error: 'name already in phonebook' });
@@ -97,7 +97,7 @@ app.post('/api/persons', (request, response) => {
     id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
   };
 
-  persons = persons.concat(person);
+  people = people.concat(person);
 
   response.json(person);
 });
