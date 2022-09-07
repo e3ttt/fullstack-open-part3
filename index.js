@@ -66,21 +66,14 @@ app.post('/api/people', (request, response) => {
       .json({ error: 'no name or number was provide' });
   }
 
-  const personAlreadyInPhonebook = people.find(p => p.name === body.name);
-
-  if (personAlreadyInPhonebook) {
-    return response.status(400).json({ error: 'name already in phonebook' });
-  }
-
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number,
-    id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-  };
+  });
 
-  people = people.concat(person);
-
-  response.json(person);
+  person.save().then(personAdded => {
+    response.json(personAdded);
+  });
 });
 
 app.listen(PORT, () => {
