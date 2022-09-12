@@ -53,9 +53,11 @@ app.get('/info', (request, response) => {
 });
 
 app.delete('/api/people/:id', (request, response) => {
-  const id = Number(request.params.id);
-  people = people.filter(p => p.id !== id);
-  response.status(204).end();
+  Person.findOneAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end();
+    })
+    .catch(error => console.log(error));
 });
 
 app.post('/api/people', (request, response) => {
