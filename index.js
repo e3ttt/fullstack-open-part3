@@ -31,20 +31,22 @@ app.use(
   })
 );
 
-app.get('/api/people', (request, response) => {
+app.get('/api/people', (request, response, next) => {
   Person.find({}).then(people => {
     response.json(people);
   });
 });
 
-app.get('/api/people/:id', (request, response) => {
-  const id = Number(request.params.id);
-  const person = people.find(p => p.id === id);
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+app.get('/api/people/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch(error => next(error));
 });
 
 app.get('/info', (request, response) => {
@@ -52,12 +54,12 @@ app.get('/info', (request, response) => {
     <div>${new Date()}</div>`);
 });
 
-app.delete('/api/people/:id', (request, response) => {
+app.delete('/api/people/:id', (request, response, next) => {
   Person.findOneAndRemove(request.params.id)
     .then(result => {
       response.status(204).end();
     })
-    .catch(error => console.log(error));
+    .catch(error => next(error));
 });
 
 app.post('/api/people', (request, response) => {
@@ -77,6 +79,23 @@ app.post('/api/people', (request, response) => {
     response.json(personAdded);
   });
 });
+
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message);
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malfomatted id' });
+  }
+
+  next(error);
+};
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' });
+};
+
+app.use(errorHandler);
+app.use(unknownEndpoint);
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
