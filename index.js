@@ -55,7 +55,7 @@ app.get('/info', (request, response) => {
 });
 
 app.delete('/api/people/:id', (request, response, next) => {
-  Person.findOneAndRemove(request.params.id)
+  Person.findOneAndRemove({ _id: request.params.id })
     .then(result => {
       response.status(204).end();
     })
